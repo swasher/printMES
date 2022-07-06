@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static "ware.css" %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block table %}
+
+<div class="container col-md-7 col-md-offset-3">
+
+    {% regroup object_list by folder as maquette_list %}
+
+    {% for folder in maquette_list %}
+        <h2>{{ folder.grouper }}</h2>
+        <table class="table">
+            {% for maquette in folder.list %}
+                <tr>
+                    <td><img class="maquette-list-img" src="{% get_media_prefix %}{{ maquette.thumb }}"></td>
+                    <td>{{ maquette.remote_filename}}</td>
+                    <td>{{ maquette.height }}x{{ maquette.width }}</td>
+                    <td>{{ maquette.name }}</td>
+                    <td>{{ maquette.folder }}</td>
+                    <td><a class="btn btn-default btn-xs" href="{% url 'maquette_detail' maquette.id %}" role="button">Show</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+
+</div>
+
+{% comment %}
+
+    {% regroup cities by country as country_list %}
+
+    <ul>
+    {% for country in country_list %}
+        <li>{{ country.grouper }}
+        <ul>
+            {% for city in country.list %}
+              <li>{{ city.name }}: {{ city.population }}</li>
+            {% endfor %}
+        </ul>
+        </li>
+    {% endfor %}
+    </ul>
+{% endcomment %}
+
+{% endblock %}

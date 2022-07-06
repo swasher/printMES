@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block table %}
+{% load static %}
+
+<div class="container col-md-7 col-md-offset-3">
+<table class="table">
+    {% for customer in object_list %}
+        <tr>
+            <td>{{ customer.name}}</td>
+            <td>{{ customer.user }}</td>
+            <td>{{ now }}</td>
+            <td><input disabled type="checkbox" name="published" {% if customer.allow_access %}checked{% endif %} /></td>
+            {#            <td><button class="btn btn-default btn-xs {% if not customer.unc %}disabled{% endif %}" type="button">Scan</button></td>#}
+            <td><a class="btn btn-default btn-xs {% if not customer.unc %}disabled{% endif %}" href="{% url 'scan' customer.pk %}" role="button">Find changes</a></td>
+            <td><a class="btn btn-default btn-xs {% if not customer.unc %}disabled{% endif %}" href="{% url 'scan' customer.pk %}" role="button">Full Scan</a></td>
+            <td><a class="btn btn-default btn-xs" href="{% url 'maquette_list' customer.pk %}" role="button">Show</a></td>
+        </tr>
+    {% endfor %}
+</table>
+</div>
+
+{% endblock %}

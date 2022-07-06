@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block table %}
+
+{% load admin_urls %}
+
+{% comment %}    ФОРМА ФИЛЬТРАЦИИ СПИСКА
+    <div class="container-fluid">
+    <div class="well">
+
+        {% load static %}
+        {{ form.media }}
+
+        {% if form.errors %}
+            <div class="container-fluid">
+                <ul class="messages">
+                    <div class="alert alert-danger" role="alert">Пожалуйста, исправьте ошибки в форме: {{ form.errors }} </div>
+                </ul>
+            </div>
+        {% endif %}
+
+        <form id="id_datetime" class="form-inline" role="form" method="post">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+            <div class="form-group">
+                {{ field.errors }}
+                {#{{ field.label_tag }}#}
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <div class="btn-group">
+            <button formaction="{% url "grid" mode='filter' %}" type="submit" class="btn btn-success">
+                <span class="glyphicon glyphicon-search"></span> Filter
+            </button>
+            <button formaction="{% url "grid" mode='printing' %}" type="submit" class="btn btn-info">
+                <span class="glyphicon glyphicon-print"></span> Print
+            </button>
+            <button formaction="{% url "grid" mode='clear' %}" type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-refresh"></span> Clear
+            </button>
+        </div>
+
+    </form>
+
+    </div>
+    </div>         {% endcomment %}
+
+<div class="container-fluid">
+    <table class="table table-striped table-hover table-bordered table-condensed">
+            <tr>
+                <th>№</th>
+                <th>Наименование</th>
+                <th>Заказчик</th>
+                <th>Тираж</th>
+                <th>Дата сдачи</th>
+                <th class="col-md-3">Описание</th>
+                <th>Производство</th>
+                <th>Выполнено</th>
+                <th>Action</th>
+            </tr>
+        {% for row in table %}
+            <tr>
+                <td>{{ row.order }}</td>
+                <td>{{ row.name }}</td>
+                <td>{{ row.customer }}</td>
+                <td>{{ row.quantity }}</td>
+                <td>{{ row.end_date }}</td>
+                <td>{{ row.remarks }}</td>
+                <td>{% if row.is_production %}
+                        <i class="bi bi-check-square-fill text-success" style="font-size: 1.5rem;"></i>
+                   {% else %}
+                        <i class="bi bi-x-square-fill text-danger" style="font-size: 1.5rem;" data-bs-toggle='tooltip' title='{{ row.preview_error }}'></i>
+                    </p>
+                   {% endif %}
+                </td>
+                <td>{% if row.status_ready %}
+                        <i class="bi bi-check-square-fill text-success" style="font-size: 1.5rem;"></i>
+                   {% else %}
+                        <i class="bi bi-x-square-fill text-danger" style="font-size: 1.5rem;" data-bs-toggle='tooltip' title='{{ row.preview_error }}'></i>
+                   {% endif %}
+                </td>
+                <td>
+{#                    <a type="button" class="btn-sm btn-default" href="{% url 'print_order' row.pk %}">#}
+{#                    <span class="glyphicon glyphicon-print"></span></a>#}
+
+                  <a class="btn btn-sm btn-info" role="button" href="{% url 'orders:print_pdf_order' row.pk %}">
+                      <i class="bi bi-printer-fill"></i></a>
+
+                  <a class="btn btn-sm btn-info" role="button" href="{% url 'orders:copy_order' row.pk %}">
+                      <i class="bi bi-box-arrow-up-right"></i></a>
+
+                  <a class="btn btn-sm btn-info" role="button" href="{% url 'admin:orders_order_change' row.pk %}">
+                      <i class="bi bi-pencil-square"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+# Приватные файлы
+**/*.txt
+!requirements.txt
+**/*secret*
+**/*NOT-FOR-GIT*
+.env
+
+
+# Файлы, создаваемые приложением
+*.pyc
+__pycache__/
+.idea/
+
+# Статика
+
+
+# Сырое
+TODO.md
+collectstatic/
