@@ -10,6 +10,10 @@ reportlab = "*"
 pysmb = "*"
 pdfrw2 = "*"
 gunicorn = "*"
+dj-database-url = "*"
+python-decouple = "*"
+psycopg2-binary = "*"
+whitenoise = "*"
 
 [dev-packages]
 

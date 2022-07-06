@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-23fbg4t(fawy1(4dnj=cd5&%_jl&*w676y=z1ewodml!^l4866'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', '*').split(',')
 
 
 # Application definition
@@ -86,6 +89,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+db_from_env = dj_database_url.config()
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -136,4 +141,4 @@ STATICFILES_DIRS = (
     ("orders", "orders/static"),
 )
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
