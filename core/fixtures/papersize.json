@@ -1,0 +1,35 @@
+[
+{
+    "model": "core.papersize",
+    "pk": 1,
+    "fields": {
+        "name": "70x50",
+        "width": 700,
+        "height": 500,
+        "comment": null,
+        "is_printing": true
+    }
+},
+{
+    "model": "core.papersize",
+    "pk": 2,
+    "fields": {
+        "name": "72x52",
+        "width": 720,
+        "height": 520,
+        "comment": null,
+        "is_printing": true
+    }
+},
+{
+    "model": "core.papersize",
+    "pk": 3,
+    "fields": {
+        "name": "64x45",
+        "width": 640,
+        "height": 450,
+        "comment": null,
+        "is_printing": true
+    }
+}
+]

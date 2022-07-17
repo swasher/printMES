@@ -1,0 +1,44 @@
+[
+{
+    "model": "core.customer",
+    "pk": 1,
+    "fields": {
+        "user": null,
+        "name": "Рога и копыта",
+        "address": "Steet 11",
+        "fio": "",
+        "phone": "",
+        "remarks": "",
+        "allow_access": false,
+        "unc": null
+    }
+},
+{
+    "model": "core.customer",
+    "pk": 2,
+    "fields": {
+        "user": null,
+        "name": "АО Солнышко",
+        "address": "Виноградная 4",
+        "fio": "",
+        "phone": "",
+        "remarks": "",
+        "allow_access": false,
+        "unc": null
+    }
+},
+{
+    "model": "core.customer",
+    "pk": 3,
+    "fields": {
+        "user": null,
+        "name": "Кондитерская фабрика",
+        "address": "Ясная 1",
+        "fio": "",
+        "phone": "",
+        "remarks": "",
+        "allow_access": false,
+        "unc": null
+    }
+}
+]

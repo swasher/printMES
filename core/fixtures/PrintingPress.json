@@ -1,0 +1,35 @@
+[
+{
+    "model": "core.printingpress",
+    "pk": 1,
+    "fields": {
+        "name": "Dominant",
+        "plate_w": 740,
+        "plate_h": 520,
+        "klapan": 20,
+        "cost": null
+    }
+},
+{
+    "model": "core.printingpress",
+    "pk": 2,
+    "fields": {
+        "name": "Speedmaster 102",
+        "plate_w": 104,
+        "plate_h": 740,
+        "klapan": 30,
+        "cost": null
+    }
+},
+{
+    "model": "core.printingpress",
+    "pk": 3,
+    "fields": {
+        "name": "Ryobi",
+        "plate_w": 720,
+        "plate_h": 540,
+        "klapan": 20,
+        "cost": null
+    }
+}
+]

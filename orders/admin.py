@@ -7,9 +7,10 @@ from django.utils.safestring import mark_safe
 from django.db.models import Max
 from django.forms import Textarea, TextInput
 
-from orders.models import Order, PrintSheet, OperationList, Operation, Detal
+from orders.models import Order, PrintSheet, Operation, Detal
 #from nested_inline.admin import NestedStackedInline, NestedTabularInline, NestedModelAdmin
 
+admin.site.enable_nav_sidebar = False
 
 # START ##############################################################################################################
 # Декоратор для добавление поля-линка
@@ -19,6 +20,9 @@ from django.utils.safestring import mark_safe
 
 
 def add_link_field(target_model=None, field='', app='', field_name='link', link_text=str, short_description=None):
+    ###
+    ### DEPRECATED
+    ###
     """
     decorator that automatically links to a model instance in the admin;
     inspired by http://stackoverflow.com/questions/9919780/how-do-i-add-a-link-from-the-django-admin-page-of-one-object-
@@ -106,11 +110,25 @@ class OperationAdminForm(forms.ModelForm):
 class PrintSheetAdminForm(forms.ModelForm):
     class Meta:
         model = PrintSheet
-        fields = ['name', 'printingpress', 'turnover', 'pressrun', 'color_front', 'color_back', 'quantity', 'paper']
+        fields = ['name', 'printingpress', 'turnover', 'pressrun', 'color_front', 'color_back', 'same_sheets', 'paper']
         widgets = {
             'color_front': TextInput(attrs={'size': 1}),
             'color_back': TextInput(attrs={'size': 1})
         }
+
+class PrintSheetInLine(admin.TabularInline):
+    model = PrintSheet
+    extra = 0
+
+    fields = ['name', 'printingpress', 'turnover', 'pressrun', 'color_front', 'color_back', 'same_sheets', 'paper', 'paper_printing_amount', 'price_sheet']
+
+    save_on_top = True
+    verbose_name = 'Печатный лист'
+    verbose_name_plural = 'Печатные листы'
+    show_change_link = True
+
+    # inlines = [DetalAdminInLine]
+    form = PrintSheetAdminForm
 
 
 class DetalAdminInLine(admin.TabularInline):
@@ -128,27 +146,14 @@ class OperationInLine(admin.TabularInline):
     form = OperationAdminForm
 
 
-@add_link_field(target_model='printsheet', field='detal', field_name='link')
-class PrintSheetInLine(admin.TabularInline):
-    model = PrintSheet
-    extra = 0
 
-    fields = ['name', 'printingpress', 'turnover', 'pressrun', 'color_front', 'color_back', 'quantity', 'paper', 'link']
-
-    save_on_top = True
-    verbose_name = 'Печатный лист'
-    verbose_name_plural = 'Печатные листы'
-    show_change_link = True
-
-    # inlines = [DetalAdminInLine]
-    form = PrintSheetAdminForm
 
 
 class OrderAdmin(admin.ModelAdmin):
     # поля, которые будут являться ссылками для перехода в редактирование "заказа"
     list_display_links = ['order', 'customer']
     # поля, видимые в таблице (не редакторе записи)
-    list_display = ('order', 'customer', 'name', 'quantity', 'start_date', 'end_date', 'remarks', 'calc_field', 'is_production')
+    list_display = ('order', 'customer', 'name', 'quantity', 'start_date', 'end_date', 'remarks', 'unit_price_calculated', 'is_production')
     # list_editable = ('order', 'customer', 'name')
     # фильтры - о дате и по заказчику
     list_filter = ['customer', 'start_date']
@@ -182,7 +187,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class PrintSheetAdmin(admin.ModelAdmin):
-    fields = ('name', ('printingpress', 'pressrun', 'quantity', 'color_front', 'color_back'), 'turnover', ('plates',),
+    fields = ('name', ('printingpress', 'pressrun', 'same_sheets', 'color_front', 'color_back'), 'turnover', ('plates',),
               'paper',
               # ('paper_warehouse_unit', 'paper_warehouse_amount', 'paper_warehouse_format'),
               ('paper_printing_amount', 'paper_printing_format'))
@@ -190,5 +195,5 @@ class PrintSheetAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Order, OrderAdmin)
-admin.site.register(OperationList)
+# admin.site.register(OperationList)
 admin.site.register(PrintSheet, PrintSheetAdmin)

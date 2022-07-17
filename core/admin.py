@@ -8,8 +8,11 @@ from core.models import Customer
 from core.models import Contractor
 from core.models import PrintingPress
 from core.models import Paper
+from core.models import PaperSize
+from core.models import TechnologicalOperation
 
 admin.site.site_header = 'Print MES (Manufacturing Execution System)'
+
 
 class EmployeeInline(admin.TabularInline):
     model = Employee
@@ -31,15 +34,24 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('user', 'address', 'fio', 'phone', 'remarks')
+    list_display = ('name', 'address', 'fio', 'phone', 'remarks', 'user',)
+    fields = ('name', 'address', 'fio', 'phone', 'remarks', 'user',)
 
 
 class ContractorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'remarks')
+    list_display = ['name', 'phone', 'remarks']
+
+
+class TechnologicalOperationAdmin(admin.ModelAdmin):
+    list_display = ['name']
 
 
 class PrintingPressAdmin(admin.ModelAdmin):
     list_display = ('name', 'plate_w', 'plate_h', 'klapan', 'cost')
+
+
+class PaperSizeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'width', 'height', 'comment', 'is_printing')
 
 
 class PaperAdmin(admin.ModelAdmin):
@@ -50,9 +62,11 @@ admin.site.register(Contractor, ContractorAdmin)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(PrintingPress, PrintingPressAdmin)
+admin.site.register(TechnologicalOperation, TechnologicalOperationAdmin)
+admin.site.register(PaperSize, PaperSizeAdmin)
 admin.site.register(Paper, PaperAdmin)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
-admin.site.unregister(Group)
+# admin.site.unregister(Group)
 

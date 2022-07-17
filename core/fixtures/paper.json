@@ -1,0 +1,38 @@
+[
+{
+    "model": "core.paper",
+    "pk": 1,
+    "fields": {
+        "name": "Serixo",
+        "grammage": 90,
+        "type": "uncoated",
+        "paper_warehouse_unit": "leaf",
+        "paper_warehouse_format": 1,
+        "description": ""
+    }
+},
+{
+    "model": "core.paper",
+    "pk": 2,
+    "fields": {
+        "name": "Serixo",
+        "grammage": 120,
+        "type": null,
+        "paper_warehouse_unit": null,
+        "paper_warehouse_format": 2,
+        "description": ""
+    }
+},
+{
+    "model": "core.paper",
+    "pk": 3,
+    "fields": {
+        "name": "Creamy Emerald",
+        "grammage": 68,
+        "type": "uncoated",
+        "paper_warehouse_unit": null,
+        "paper_warehouse_format": 1,
+        "description": "Описание\r\nЧистоцеллюлозная бумага без покрытия светло- бежевого оттентка.\r\n\r\nПрименение\r\nПечать книг, журналов, каталогов, буклетов, листовок, постеров, фирменных бланков, изготовления внутренних блоков ежедневников и блокнотов.\r\n\r\nПоставка\r\nПоставляется в листах полиграфических форматов. Плотности - 68, 78 и 98 г/м2."
+    }
+}
+]
