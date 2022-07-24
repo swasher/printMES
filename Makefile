@@ -53,3 +53,8 @@ make_requirements:
 ssh:
 	docker exec -it sandglass_db_1 bash
 
+heroku-reset-db:
+	heroku pg:reset
+	heroku run python manage.py migrate
+	heroku run python manage.py createsuperuser --username=swasher --email=mr.swasher@gmail.com
+	heroku run python manage.py collectstatic
