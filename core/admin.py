@@ -14,28 +14,32 @@ from core.models import TechnologicalOperation
 admin.site.site_header = 'Print MES (Manufacturing Execution System)'
 
 
-class EmployeeInline(admin.TabularInline):
-    model = Employee
-    can_delete = False
-    verbose_name_plural = 'Доп. инфо'
+# deprecated
+# class UserAdmin(BaseUserAdmin):
+#     inlines = (EmployeeInline, )
 
 
-class UserAdmin(BaseUserAdmin):
-    inlines = (EmployeeInline, )
+# class EmployeeInline(admin.TabularInline):
+#     model = Employee
+#     can_delete = False
+#     verbose_name_plural = 'Доп. инфо'
 
 
 class EmployeeAdmin(admin.ModelAdmin):
     model = Employee
-    list_display = ('get_username', 'user', 'phone')
+    list_display = ('get_username', 'user_groups', 'phone')
 
     def get_username(self, obj):
-        return ' '.join([obj.user.first_name, obj.user.last_name])
+        return ' '.join([obj.first_name, obj.last_name])
     get_username.short_description = 'ФИО'
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'address', 'fio', 'phone', 'remarks', 'user',)
-    fields = ('name', 'address', 'fio', 'phone', 'remarks', 'user',)
+    model = Customer
+    list_display = ('organization', 'address', 'fio', 'phone', 'remarks')
+    # Тут можно выводить либо все поля от User (пермишены и т.д),
+    # либо ограничится небольшим набором полей, что более удобно для конечного пользователя типа манагера
+    fields = ('username', 'organization', 'address', 'fio', 'phone', 'remarks')
 
 
 class ContractorAdmin(admin.ModelAdmin):
@@ -66,7 +70,9 @@ admin.site.register(TechnologicalOperation, TechnologicalOperationAdmin)
 admin.site.register(PaperSize, PaperSizeAdmin)
 admin.site.register(Paper, PaperAdmin)
 
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+
+# admin.site.unregister(User)
+# admin.site.register(User, UserAdmin)
 # admin.site.unregister(Group)
+
 

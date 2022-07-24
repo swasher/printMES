@@ -19,7 +19,7 @@ from reportlab.lib.units import inch
 from reportlab.lib import colors
 
 
-from .reporting_adds import StyleSheet
+from .reporting_reportlab_styles import StyleSheet
 
 
 """
@@ -50,9 +50,6 @@ class NumberedCanvas(canvas.Canvas):
 
 
 class PrintOrder(object):
-
-
-
 
     def __init__(self, buffer, orderid):
         self.buffer = buffer
@@ -87,7 +84,7 @@ class PrintOrder(object):
 
         # Footer
         now = datetime.datetime.now()
-        footer = Paragraph('Типография ТЭС. Одесса. {} -- стр. {}'.format(now.strftime("%Y-%m-%d %H:%M"), doc.page) , styles['Normal'])
+        footer = Paragraph('Типография ТЭС. Одесса. {} -- стр. {}'.format(now.strftime("%Y-%m-%d %H:%M"), doc.page), styles['Normal'])
         w, h = footer.wrap(doc.width, doc.bottomMargin)
         footer.drawOn(canvas, doc.leftMargin, h)
 
@@ -96,10 +93,7 @@ class PrintOrder(object):
 
     def printpdf(self):
 
-
-
-
-        order = Order.objects.get(order=self.orderid)
+        order = Order.objects.get(pk=self.orderid)
 
         # this section contain list of all data for report:
         # order.order - номер заказа

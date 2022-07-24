@@ -22,10 +22,10 @@ def StyleSheet():
 
     # Register Fonts
     # pdfmetrics.registerFont(TTFont('Arial', settings.STATIC_ROOT + 'fonts/arial.ttf'))
-    pdfmetrics.registerFont(TTFont('Arial', static('orders/arial.ttf')))
-    pdfmetrics.registerFont(TTFont('Arial-Bold', static('arialbd.ttf')))
-    pdfmetrics.registerFont(TTFont('Arial-Italic', static('fonts/ariali.ttf')))
-    pdfmetrics.registerFont(TTFont('Arial-Bold-Italic', static('fonts/arialbi.ttf')))
+    pdfmetrics.registerFont(TTFont('Arial', 'arial.ttf'))
+    pdfmetrics.registerFont(TTFont('Arial-Bold', 'arialbd.ttf'))
+    pdfmetrics.registerFont(TTFont('Arial-Italic', 'ariali.ttf'))
+    pdfmetrics.registerFont(TTFont('Arial-Bold-Italic', 'arialbi.ttf'))
 
 
     """Returns a stylesheet object"""

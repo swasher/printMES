@@ -7,6 +7,7 @@ from core.models import PrintingPress
 from core.models import Customer
 from core.models import Contractor
 from core.models import Paper
+from core.models import Employee
 from core.models import TechnologicalOperation
 
 """
@@ -19,8 +20,13 @@ from core.models import TechnologicalOperation
 """
 
 class Order(models.Model):
+    TYPE = (
+        ('det', 'Детали'),
+        ('pol', 'Полосы'),
+    )
     is_production = models.BooleanField(default=False, help_text='Заказ находится в производстве')
     order = models.IntegerField(unique=True, verbose_name='Номер заказа', help_text='Max order')
+    manager = models.ForeignKey(Employee, verbose_name='Менеджер', on_delete=models.RESTRICT)
     customer = models.ForeignKey(Customer, verbose_name='Заказчик', on_delete=models.RESTRICT)
     name = models.CharField(max_length=100, verbose_name='Наименование заказа')
     quantity = models.IntegerField(verbose_name='Тираж', help_text='Общее кол-во заказанных изделий')
@@ -29,7 +35,7 @@ class Order(models.Model):
     end_date = models.DateField(blank=True, null=True, verbose_name='Сдать до', help_text='Предполагаемая дата сдачи заказа')
     remarks = models.TextField(blank=True, verbose_name='Описание заказа')
     status_ready = models.BooleanField(default=False, help_text='True когда заказ готов к выдаче заказчику.')
-    status_ready_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
+    type = models.CharField(max_length=3, choices=TYPE, verbose_name='Тип заказа')
 
     class Meta:
         verbose_name = 'Заказ'
@@ -43,20 +49,8 @@ class Order(models.Model):
         return unit_price
     unit_price_calculated.short_description = 'unit_price'
 
-    def save(self, *args, **kwargs):
-        super(Order, self).save(*args, **kwargs)
-        """
-        Автонумерация печатных листов
-        """
-        lists = PrintSheet.objects.filter(order__pk=self.pk)
-        for l in lists:
-            print(l.name)
-        #========= end
-
-
-
     def __str__(self):
-        return 'Заказ {} от {} [{}]'.format(self.name, self.customer.name, self.quantity)
+        return 'Заказ {} от {} [{}gb.]'.format(self.name, self.customer.organization, self.quantity)
 
 
 """
@@ -72,7 +66,7 @@ TODO
 С другой стороны, модель может не меняться, потому что различие состоит в том, что ДРУГИЕ модели ссылаются
 на эту, то есть если монтаж - то мы имеем записи Detal, ссылающиеся на Order, если Package, то Stanzforms ссылающиеся 
 на Order... но тогда нужно продумать разницу в интерфейсе... различен и ввод заказа, и его отображение...
-"""
+
 class OrderPack(Order):
     pass
 class OrderMagazine(Order):
@@ -82,6 +76,7 @@ class OrderMontage(Order):
 class OrdedNonStandart(Order):
     pass
 
+"""
 
 class PrintSheet(models.Model):
     TURNOVER = (
@@ -104,10 +99,12 @@ class PrintSheet(models.Model):
     paper_printing_amount = models.IntegerField(blank=True, null=True, verbose_name='Кол-во листов', help_text='Необходимо выдать листов со склада')
     paper_printing_format = models.CharField(max_length=20, blank=True, verbose_name='Формат печати', help_text='Формат бумаги в печать')
     price_sheet = models.FloatField(blank=True, null=True, verbose_name='Price', help_text='Стоимость печати')
+    printsheet_sequence = models.PositiveIntegerField(default=0, blank=False, null=False, db_index=True, help_text='Поле для плагина sortable2 чтобы упорядочивать листы')
 
     class Meta:
         verbose_name = 'Печатный лист'
         verbose_name_plural = 'Печатные листы'
+        ordering = ['printsheet_sequence']
 
     def __str__(self):
         return '{} [{} {}]'.format(self.name, self.printingpress, '+'.join([self.color_front, self.color_back]))
@@ -125,7 +122,8 @@ class PrintSheet(models.Model):
 
 
 class Detal(models.Model):
-    printsheet = models.ForeignKey(PrintSheet, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    printsheet = models.ForeignKey(PrintSheet, blank=True, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, verbose_name='Название детали')
     width = models.IntegerField(verbose_name='Высота', blank=True, null=True, help_text='Размер детали, высота, мм')
     height = models.IntegerField(verbose_name='Ширина', blank=True, null=True, help_text='Размер детали, ширина, мм')
@@ -159,12 +157,14 @@ class Operation(models.Model):
     name = models.ForeignKey(TechnologicalOperation, verbose_name='Операция', help_text='', on_delete=models.CASCADE)
     printsheet = models.ForeignKey(PrintSheet, blank=True, null=True, verbose_name='Печатный лист', help_text='Если оперция не относится к конкретному печатному листу, оставьте это поле пустым', on_delete=models.CASCADE)
     contractor = models.ForeignKey(Contractor, blank=True, null=True, verbose_name='Подрядчик', on_delete=models.RESTRICT)
-    price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name='Стоимость, грн.')
+    price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name='Стоимость, EUR.')
     remarks = models.CharField(max_length=500, blank=True)
+    operation_sequence = models.PositiveIntegerField(default=0, blank=False, null=False, db_index=True, help_text='Поле для плагина sortable2 чтобы упорядочивать операции')
 
     class Meta:
         verbose_name = 'Операция'
         verbose_name_plural = 'Операции'
+        ordering = ['operation_sequence']
 
     def __str__(self):
         return self.name.name

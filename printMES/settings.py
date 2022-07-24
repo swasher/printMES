@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'adminsortable2',
     'core',
     'orders',
     'stanzforms',
@@ -143,7 +144,8 @@ LOGIN_REDIRECT_URL = "/"
 
 STATICFILES_DIRS = (
     # os.path.join(BASE_DIR, 'static'),
-    ("orders", "orders/static"),
+    # ("orders", "orders/static"),
+    BASE_DIR / "static",
 )
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')

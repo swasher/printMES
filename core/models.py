@@ -2,33 +2,41 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class Employee(User):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=13, blank=True)
 
     class Meta:
         verbose_name = 'Сотрудник'
         verbose_name_plural = 'Сотрудники'
 
+    @property
+    def user_groups(self):
+        """
+        Для отображения как поле в админке
+        """
+        l = self.groups.values_list('name', flat=True)  # QuerySet Object
+        groups = ' '.join(list(l))
+        return groups
+
     def __str__(self):
-        return ' '.join(self.user.username)
+        return ' '.join(self.first_name)
 
 
-class Customer(models.Model):
+class Customer(User):
     """
     Наследуется от User, потому что Заказчик может логинится и смотреть свои файлы.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=150)
+    organization = models.CharField(max_length=150, verbose_name='Название организации')
     address = models.CharField(max_length=250, blank=True)
-    fio = models.CharField(max_length=150, blank=True, verbose_name='ФИО', help_text='ФИО и должность контактного лица')
+    fio = models.CharField(max_length=150, blank=True, verbose_name='ФИО', help_text='ФИО контактного лица')
     phone = models.CharField(max_length=50, blank=True, help_text='Телефон контактного лица')
     remarks = models.TextField(blank=True, verbose_name='Примечания')
     allow_access = models.BooleanField(blank=False, default=False) # customer allow access to their Products
-    unc = models.CharField(max_length=150, blank=True, null=True) # path to source products \\Server\SharedFolder\Customer\Files
+    unc = models.CharField(max_length=250, blank=True, null=True) # path to source products \\Server\SharedFolder\Customer\Files
 
     def __str__(self):
-        return self.name
+        return self.organization
 
     class Meta:
         verbose_name = 'Заказчик'

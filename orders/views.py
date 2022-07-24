@@ -6,8 +6,10 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from orders.models import Order, PrintSheet, Operation, Detal
 from orders.forms import NewOrderForm
-from .reporting import PrintOrder
-#from reporting import printpdf
+# from .reporting_reportlab import PrintOrder
+from .reporting_borb import PrintOrder
+# from reporting import printpdf
+from django.http import FileResponse, Http404
 
 
 def create_new_order(request):
@@ -89,15 +91,36 @@ def copy_order(request, orderid):
     return redirect('/')
 
 
-def print_pdf_order(request, orderid):
+def print_pdf_order_reportlab_version(request, orderid):
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="My Users.pdf"'
 
     buffer = BytesIO()
-
     report = PrintOrder(buffer, orderid)
     pdf = report.printpdf()
 
     response.write(pdf)
-    return response
+    return pdf
+
+
+def print_pdf_order(request, orderid):
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="output.pdf"'
+
+
+    # via reportlab
+    # buffer = BytesIO()
+    # report = PrintOrder(buffer, orderid)
+    # pdf = report.printpdf()
+
+    order = Order.objects.get(pk=orderid)
+    # via borb
+    report = PrintOrder(order)
+    pdf = report.printpdf()
+
+    try:
+        return FileResponse(open('output.pdf', 'rb'), content_type='application/pdf')
+    except FileNotFoundError:
+        raise Http404()

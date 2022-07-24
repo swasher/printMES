@@ -5,7 +5,10 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.db.models import Max
-from django.forms import Textarea, TextInput
+from adminsortable2.admin import SortableAdminMixin
+from adminsortable2.admin import SortableTabularInline
+from adminsortable2.admin import SortableAdminBase
+from django.forms import Textarea, TextInput, ModelForm
 
 from orders.models import Order, PrintSheet, Operation, Detal
 #from nested_inline.admin import NestedStackedInline, NestedTabularInline, NestedModelAdmin
@@ -65,15 +68,29 @@ def add_link_field(target_model=None, field='', app='', field_name='link', link_
 # END ################################################################################################################
 
 
+class OrderAdminModelForm(ModelForm):
+    class Meta(object):
+        model = Order
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(OrderAdminModelForm, self).__init__(*args, **kwargs)
+
+        if not self.instance.pk:
+            return  # don't fetch related choices for new objects
+
+        # current_event = self.instance.event
+        # self.fields['route'] = ChoiceField(
+        #     choices=OtherModel.objects.filter(event=current_event).values_list('id', 'title'))
 
 
 # TODO перенести это в формы может быть?
 class OrderAdminForm(forms.ModelForm):
     class Meta:
-        #model = Author
-        #fields = ('name', 'title', 'birth_date')
+        model = Order
+        fields = '__all__'  # ('name', 'title', 'birth_date')
         widgets = {
-            'remarks': Textarea(attrs={'cols': 80, 'rows': 5}),
+            'remarks': Textarea(attrs={'cols': 80, 'rows': 3}),
         }
 
     # макс. заказ === ЭТО РАБОТАЕТ === но только для help_text, для verbose не пашет почему-то
@@ -91,6 +108,13 @@ class OrderAdminForm(forms.ModelForm):
         self.fields['order'].help_text = 'Последний зарег. номер: {}'.format(last_number)
         self.fields['order'].initial = int(last_number) + 1
 
+        if self.instance.type == 'det':
+            if DetalInLine not in OrderAdmin.inlines:
+                OrderAdmin.inlines.insert(0, DetalInLine)
+        elif self.instance.type == 'pol':
+            pass
+
+
 
 class OperationAdminForm(forms.ModelForm):
     class Meta:
@@ -107,20 +131,30 @@ class OperationAdminForm(forms.ModelForm):
             self.fields['printsheet'].queryset = PrintSheet.objects.filter(order=self.instance.order_id)
 
 
+class OperationInLine(SortableTabularInline):
+    model = Operation
+    extra = 0
+    verbose_name = 'Технологическая операция'
+    verbose_name_plural = 'Технологические операции'
+
+    form = OperationAdminForm
+
+
 class PrintSheetAdminForm(forms.ModelForm):
     class Meta:
         model = PrintSheet
-        fields = ['name', 'printingpress', 'turnover', 'pressrun', 'color_front', 'color_back', 'same_sheets', 'paper']
+        fields = ['name', 'description', 'printingpress', 'turnover', 'pressrun', 'color_front', 'color_back', 'same_sheets', 'paper']
         widgets = {
             'color_front': TextInput(attrs={'size': 1}),
             'color_back': TextInput(attrs={'size': 1})
         }
 
-class PrintSheetInLine(admin.TabularInline):
+
+class PrintSheetInLine(SortableTabularInline):
     model = PrintSheet
     extra = 0
 
-    fields = ['name', 'printingpress', 'turnover', 'pressrun', 'color_front', 'color_back', 'same_sheets', 'paper', 'paper_printing_amount', 'price_sheet']
+    fields = ['description', 'printingpress', 'turnover', 'pressrun', 'color_front', 'color_back', 'same_sheets', 'paper', 'paper_printing_amount', 'price_sheet']
 
     save_on_top = True
     verbose_name = 'Печатный лист'
@@ -131,25 +165,14 @@ class PrintSheetInLine(admin.TabularInline):
     form = PrintSheetAdminForm
 
 
-class DetalAdminInLine(admin.TabularInline):
+class DetalInLine(admin.TabularInline):
     model = Detal
     extra = 0
     list_display = ('name', 'size', 'amount')
+    fields = ['name', 'width', 'height', 'amount', 'printsheet']
 
 
-class OperationInLine(admin.TabularInline):
-    model = Operation
-    extra = 0
-    verbose_name = 'Технологическая операция'
-    verbose_name_plural = 'Технологические операции'
-
-    form = OperationAdminForm
-
-
-
-
-
-class OrderAdmin(admin.ModelAdmin):
+class OrderAdmin(SortableAdminBase, admin.ModelAdmin):
     # поля, которые будут являться ссылками для перехода в редактирование "заказа"
     list_display_links = ['order', 'customer']
     # поля, видимые в таблице (не редакторе записи)
@@ -173,11 +196,14 @@ class OrderAdmin(admin.ModelAdmin):
     #fields = ('is_production', 'order', 'customer', 'price', 'name', 'quantity', 'start_date', 'end_date', 'remarks')
     fieldsets = (
         (None, {
-            'fields': ('is_production', ('order', 'customer', 'price'), 'name', 'quantity', ('start_date', 'end_date'), 'remarks',),
+            'fields': (('is_production', 'type', 'manager'),
+                       ('order', 'customer', 'price'),
+                       'name', 'quantity', ('start_date', 'end_date'), 'remarks',),
         }),
     )
 
     inlines = [PrintSheetInLine, OperationInLine]
+    # inlines = [PrintSheetInLine, OperationInLine, DetalInLine]
     save_as = True
 
     # В форме редактирование возле "плюсика" появляется "карандашик" (Django 1.8)
@@ -186,12 +212,14 @@ class OrderAdmin(admin.ModelAdmin):
     form = OrderAdminForm
 
 
+
+
 class PrintSheetAdmin(admin.ModelAdmin):
     fields = ('name', ('printingpress', 'pressrun', 'same_sheets', 'color_front', 'color_back'), 'turnover', ('plates',),
               'paper',
               # ('paper_warehouse_unit', 'paper_warehouse_amount', 'paper_warehouse_format'),
               ('paper_printing_amount', 'paper_printing_format'))
-    inlines = [DetalAdminInLine]
+    inlines = [DetalInLine]
 
 
 admin.site.register(Order, OrderAdmin)

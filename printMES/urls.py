@@ -28,15 +28,8 @@ urlpatterns = [
     path('', include('warehouse.urls')),
 ]
 
-# For development only!
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-# urlpatterns = [
-#     url('^', include('django.contrib.auth.urls')),
-#     url(r'^accounts/', include('accounts.urls', namespace='accounts')),
-#
-# ]
-#
+
+# For development only!
 # if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
