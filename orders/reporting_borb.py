@@ -29,18 +29,16 @@ class PrintOrder(object):
         layout.add(Paragraph(f"Order #{order.order}", font_size=18))
 
         lists = PrintSheet.objects.filter(order__pk=order.pk)
-        for list in lists:
-            layout.add(Paragraph(f"List {list}"))
+        if lists:
+            table = FixedColumnWidthTable(number_of_columns=3, number_of_rows=len(lists))
 
-        table = FixedColumnWidthTable(number_of_columns=3, number_of_rows=len(lists))
+            for l in lists:
+                table.add(Paragraph(l.name))
+                table.add(Paragraph(l.description))
+                table.add(Paragraph(l.printingpress.name))
 
-        for l in lists:
-            table.add(Paragraph(l.name))
-            table.add(Paragraph(l.description))
-            table.add(Paragraph(l.printingpress.name))
-
-        table.set_padding_on_all_cells(Decimal(2), Decimal(2), Decimal(2), Decimal(2))
-        layout.add(table)
+            table.set_padding_on_all_cells(Decimal(2), Decimal(2), Decimal(2), Decimal(2))
+            layout.add(table)
 
 
     def printpdf(self):

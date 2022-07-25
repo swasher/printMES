@@ -93,7 +93,7 @@ class PrintSheet(models.Model):
     plates = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Пластины', help_text='Кол-во пластин на один лист')
     color_front = models.CharField(max_length=10, blank=True, null=False, verbose_name='F', help_text='Кол-во красок на лице')
     color_back = models.CharField(max_length=10, blank=True, null=False, verbose_name='B', help_text='Кол-во красок на обороте, 0 - если без оборота')
-    same_sheets = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Одинаковых', help_text='Кол-во одинаковых печатных листов')
+    same_sheets = models.PositiveSmallIntegerField(blank=False, default=1, verbose_name='Одинаковых', help_text='Кол-во одинаковых печатных листов')
     turnover = models.CharField(blank=True, null=True, max_length=20, choices=TURNOVER, verbose_name='Оборот')
     paper = models.ForeignKey(Paper, blank=True, null=True, max_length=300, verbose_name='Граммаж и тип бумаги', on_delete=models.RESTRICT)
     paper_printing_amount = models.IntegerField(blank=True, null=True, verbose_name='Кол-во листов', help_text='Необходимо выдать листов со склада')
