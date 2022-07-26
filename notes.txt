@@ -1,0 +1,48 @@
+bootstrrap 5 datapicker (на самом деле html5)
+https://stackoverflow.com/questions/68662850/datepicker-bootstrap-5
+https://www.codeply.com/p/zU0EWDmIfn
+
+
+heroku run python manage.py migrate
+
+heroku run python manage.py createsuperuser
+
+Как рекурсивно удалить файлы
+https://ru.stackoverflow.com/a/1154529
+
+REPORTING
+--------------
+
+- ReportLab
+    - Платной является возможность использования XML в качестве темплейтов для отчетов. В бесплатной версии можно только
+    создвать PDF в коде питон. В принципе, этого должно быть достаточно, хоть и не дает гибкости и удобства.
+    - Статья введение https://www.blog.pythonlibrary.org/2010/03/08/a-simple-step-by-step-reportlab-tutorial/
+    - Статья по таблицам  https://www.blog.pythonlibrary.org/2010/09/21/reportlab-tables-creating-tables-in-pdfs-with-python/
+    - Большой видеокурс 52 ролика https://www.youtube.com/watch?v=kzmyFTwIJw8&list=PLI8raxzYtfGzwEqGLm4fCnnbTAGbSHa6-
+
+
+- borb
+    - крутая с виду библиотека, имхо самая мощная
+    - книга от автора по ней - https://github.com/jorisschellekens/borb-examples/
+
+- PyPDF
+
+- PyPDF2
+    - https://pyfpdf.github.io/fpdf2/Tables.html
+    - расширенная библиотека с таблицами
+
+- WeasyPrintView
+    - на основе HTML
+
+- Jaspersoft
+    - есть привязка питон https://github.com/acesseonline/pyreportjasper
+
+- pyreports
+    - не годится, пакет совершенно для других целей
+
+- Anvil
+    - На основе HTML, к тому же еще с выполнением на сервере, что небезопасно в перспективе
+
+- PDF Reports
+    - https://edinburgh-genome-foundry.github.io/pdf_reports/
+    - На основе HTML

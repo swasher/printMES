@@ -1,5 +1,4 @@
 # Приватные файлы
-**/*.txt
 !requirements.txt
 **/*secret*
 **/*NOT-FOR-GIT*
