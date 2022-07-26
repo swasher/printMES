@@ -1,5 +1,4 @@
 # Приватные файлы
-!requirements.txt
 **/*secret*
 **/*NOT-FOR-GIT*
 .env
@@ -11,8 +10,5 @@ __pycache__/
 .idea/
 
 # Статика
-
-
-# Сырое
-TODO.md
 collectstatic/
+output.pdf
